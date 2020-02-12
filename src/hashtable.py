@@ -51,20 +51,21 @@ class HashTable:
 
         Fill this in.
         '''
+        # overwrite matching key if key already exists
         if self.retrieve(key):
             self.remove(key)
-        
+        # get index and node at index
         index = self._hash_mod(key)
         node = self.storage[index]
-        
+        # exception if no node already then add and exit
         if node is None:
             self.storage[index] = LinkedPair(key,value)
             return
-        
-        prev = node
+        # if collision loop through LL
         while node is not None:
             prev = node
             node = node.next
+            # last node added to .next
         prev.next = LinkedPair(key,value)
 
     def remove(self, key):
@@ -75,20 +76,26 @@ class HashTable:
 
         Fill this in.
         '''
+        #  hash the key
         index = self._hash_mod(key)
         node = self.storage[index]
         prev = None
+        # loop through LL
         while node is not None and node.key != key:
             prev = node
             node = node.next
+        # if not found
         if node is None:
             return f"The given {key} is not in the hashtable"
         else:
+            # if found 
             removed = node.value
-            
+            # delete
             if prev is None:
+                #  or next possible match
                 self.storage[index] = node.next
             else:
+                # point to subsequent node and delete
                 prev.next = prev.next.next
             return removed
 
@@ -100,14 +107,16 @@ class HashTable:
 
         Fill this in.
         '''
+        #  hash key
         index = self._hash_mod(key)
         node = self.storage[index]
-
+        #  loop through
         while node is not None and node.key != key:
             node = node.next
         if node is None:
             return None
         else:
+            # return if found
             return node.value
 
     def resize(self):
@@ -117,13 +126,16 @@ class HashTable:
 
         Fill this in.
         '''
+        # create hashtable
         ht = HashTable(self.capacity*2)
 
+        # loop through and copy
         for node in self.storage:
             current_node = node
             while current_node is not None:
                 ht.insert(current_node.key, current_node.value)
-                current_node = current_node.next
+                current_node = current_node.next   
+        # update the original hashtable
         self.capacity = self.capacity*2
         self.storage = ht.storage
 
